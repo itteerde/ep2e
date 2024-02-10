@@ -14,3 +14,9 @@ TEST(ep2e, is_critical) {
 	EXPECT_TRUE(ep2e::is_critical(0));
 	EXPECT_TRUE(ep2e::is_critical(99));
 }
+
+TEST(ep2e, opposed_test) {
+	EXPECT_EQ(ep2e::opposed_test(80, 40, 60, 60, false, false), 1);
+	EXPECT_EQ(ep2e::opposed_test(40, 80, 60, 60, false, false), 0);
+	EXPECT_EQ(ep2e::opposed_test(80, 80, 60, 60, false, false), 1);
+}

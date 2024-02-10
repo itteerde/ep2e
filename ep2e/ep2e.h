@@ -30,7 +30,19 @@ namespace ep2e {
     /**
     * 1 if we win, 0 otherwise (the defender wins if draw, so there is no draw)
     */
-    int contestedTest(int skillWe, int skillThey, int rollWe, int rollThey, bool flipWe, bool flipThey) {
+    int opposed_test(int skillWe, int skillThey, int rollWe, int rollThey, bool flipWe, bool flipThey) {
+
+        // criticals can be evaluated without caring about flip-flop
+        if (is_critical(rollWe)) {
+            if (rollWe <= skillWe) {
+                if (is_critical(rollThey)) {
+                    if (rollWe > rollThey) {
+                        return 1;
+                    }
+                }
+            }
+        }
+
         if (rollWe <= skillWe && rollThey > skillThey) {
             return 1;
         }
