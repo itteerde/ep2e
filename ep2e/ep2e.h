@@ -16,6 +16,31 @@ namespace ep2e {
         return flipped;
     }
 
+    /**
+    * tests if a Test Roll is critical. true if critical, false if not.
+    */
+    bool is_critical(int r) {
+        if (r / 10 == r % 10) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+    * 1 if we win, 0 otherwise (the defender wins if draw, so there is no draw)
+    */
+    int contestedTest(int skillWe, int skillThey, int rollWe, int rollThey, bool flipWe, bool flipThey) {
+        if (rollWe <= skillWe && rollThey > skillThey) {
+            return 1;
+        }
+        if (rollWe > skillWe && rollThey <= skillThey) {
+            return 0;
+        }
+
+        return 0;
+    }
+
     class Dice {
 
     private:
