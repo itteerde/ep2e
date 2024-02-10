@@ -5,6 +5,17 @@
 
 namespace ep2e {
 
+    /**
+    * flip-flops the roll r. r [0..99].
+    */
+    int flip(int r) {
+        int flipped{ 0 };
+        flipped += (r % 10) * 10;
+        flipped += r / 10;
+
+        return flipped;
+    }
+
     class Dice {
 
     private:
@@ -34,7 +45,7 @@ namespace ep2e {
         static int d100() {
             static std::random_device                  rand_dev;
             static std::mt19937                        generator(rand_dev());
-            static std::uniform_int_distribution<int>    distr(1, 100);
+            static std::uniform_int_distribution<int>    distr(0, 99);
             return distr(generator);
         }
 
