@@ -8,23 +8,15 @@ namespace ep2e {
     /**
     * flip-flops the roll r. r [0..99].
     */
-    int flip(int r) {
-        int flipped{ 0 };
-        flipped += (r % 10) * 10;
-        flipped += r / 10;
-
-        return flipped;
+    inline int flip(int r) {
+        return (r % 10) * 10 + r / 10;
     }
 
     /**
     * tests if a Test Roll is critical. true if critical, false if not.
     */
-    bool is_critical(int r) {
-        if (r / 10 == r % 10) {
-            return true;
-        }
-
-        return false;
+    inline bool is_critical(int r) {
+        return (r / 10 == r % 10);
     }
 
     /**
@@ -40,11 +32,23 @@ namespace ep2e {
         if (is_critical(rollWe)) {
             if (rollWe <= skillWe) {
                 if (is_critical(rollThey)) {
+                    // both critical
                     if (rollWe > rollThey) {
                         return 1;
                     }
+                    if (rollThey > skillThey) {
+                        return 1;
+                    }
+                    return 0;
                 }
             }
+            if (rollThey <= skillThey) {
+                return 0;
+            }
+            if (skillWe > skillThey) {
+                return 1;
+            }
+            return 0;
         }
 
         // after criticals are done, for flip-flop, there is a best result individually for the opponents, so lets figure out those
@@ -53,7 +57,7 @@ namespace ep2e {
         int bestThey{ rollThey };
 
         if (flipWe) {
-            int flippedWe{ rollWe };
+            int flippedWe = flip(rollWe);
             if (rollWe > skillWe && flippedWe <= skillWe) {
                 bestWe = flippedWe;
             }
@@ -63,13 +67,20 @@ namespace ep2e {
         }
 
         if (flipThey) {
-            int flippedThey{ rollThey };
+            int flippedThey = flip(rollThey);
             if (rollThey > skillThey && flippedThey <= skillThey) {
                 bestThey = flippedThey;
             }
             if (rollThey <= skillThey && flippedThey <= skillThey) {
                 bestThey = rollThey > flippedThey ? rollThey : flippedThey;
             }
+        }
+
+        if (bestWe <= skillWe && bestThey <= skillThey) {
+            if (bestWe > bestThey) {
+                return 1;
+            }
+            return 0;
         }
 
         return 0;
