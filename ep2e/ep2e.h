@@ -28,28 +28,32 @@ namespace ep2e {
     */
     int opposed_test(int skillWe, int skillThey, int rollWe, int rollThey, bool flipWe, bool flipThey) {
 
-        // criticals can be evaluated without caring about flip-flop
-        if (is_critical(rollWe)) {
-            if (rollWe <= skillWe) {
-                if (is_critical(rollThey)) {
-                    // both critical
-                    if (rollWe > rollThey) {
-                        return 1;
-                    }
-                    if (rollThey > skillThey) {
-                        return 1;
-                    }
-                    return 0;
-                }
-            }
-            if (rollThey <= skillThey) {
-                return 0;
-            }
-            if (skillWe > skillThey) {
+        // start criticals
+        // only ours is a critical success
+        if (
+            (is_critical(rollWe) && rollWe <= skillWe) &&
+            (!is_critical(rollThey) || rollThey > skillThey)
+            ) {
+            return 1;
+        }
+        // only theirs is a critical success
+        if (
+            (is_critical(rollThey) && rollThey <= skillThey) &&
+            (!is_critical(rollWe) || rollWe > skillWe)
+            ) {
+            return 0;
+        }
+        // both are critical success
+        if (
+            (is_critical(rollWe) && rollWe <= skillWe) &&
+            (is_critical(rollThey) && rollThey <= skillThey)
+            ) {
+            if (rollWe > rollThey) {
                 return 1;
             }
             return 0;
         }
+        // end criticals
 
         // after criticals are done, for flip-flop, there is a best result individually for the opponents, so lets figure out those
 
@@ -76,11 +80,27 @@ namespace ep2e {
             }
         }
 
+        // only we succeed
+        if (bestWe <= skillWe && bestThey > skillThey) {
+            return 1;
+        }
+
+        // only they succeed
+        if (bestThey <= skillThey && bestWe > skillWe) {
+            return 0;
+        }
+        
+        // both succeed
         if (bestWe <= skillWe && bestThey <= skillThey) {
             if (bestWe > bestThey) {
                 return 1;
             }
             return 0;
+        }
+        
+        // both fail
+        if (skillWe > skillThey) {
+            return 1;
         }
 
         return 0;
