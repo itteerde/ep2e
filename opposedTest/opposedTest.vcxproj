@@ -106,7 +106,6 @@
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>E:\git\ep2ecpp\ep2e\ep2e;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -123,7 +122,6 @@
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>E:\git\ep2ecpp\ep2e\ep2e;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
