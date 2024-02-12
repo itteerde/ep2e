@@ -14,6 +14,7 @@ po::options_description make_options_description() {
         ("skillThey", po::value<int>(), "their/defender (modified) skill")
         ("flipWe", po::value<int>(), "do we have flip-flop available? (1|0)")
         ("flipThey", po::value<int>(), "do they have flip-flop available? (1|0)")
+        ("silent", "surpress all output except the result (for interoperability)")
         ;
     return desc;
 }
@@ -54,38 +55,40 @@ int main(int argc, char* argv[])
         return 0;
     }
 
-    if (!vm.count("skillWe")) {
+    if (!vm.count("skillWe") && !vm.count("silent")) {
         std::cout << terminal_padding << "no --skillWe provided, using default " << skillWe << std::endl;
     }
     else {
         skillWe = vm["skillWe"].as<int>();
     }
 
-    if (!vm.count("skillThey")) {
+    if (!vm.count("skillThey") && !vm.count("silent")) {
         std::cout << terminal_padding << "no --skillThey provided, using default " << skillThey << std::endl;
     }
     else {
         skillThey = vm["skillThey"].as<int>();
     }
 
-    if (!vm.count("flipWe")) {
+    if (!vm.count("flipWe") && !vm.count("silent")) {
         std::cout << terminal_padding << "no --flipWe provided, using default " << (flipWe ? 1 : 0) << std::endl;
     }
     else {
         flipWe = vm["flipWe"].as<int>() == 1 ? true : false;
     }
 
-    if (!vm.count("flipThey")) {
+    if (!vm.count("flipThey") && !vm.count("silent")) {
         std::cout << terminal_padding << "no --flipThey provided, using default " << (flipThey ? 1 : 0) << std::endl;
     }
     else {
         flipThey = vm["flipThey"].as<int>() == 1 ? true : false;
     }
 
-    std::cout << std::endl;
-    std::cout << terminal_padding << "running all possible results with" << std::endl;
-    std::cout << terminal_padding << "{" << skillWe << "," << skillThey << "," << flipWe << "," << flipThey << "}" << std::endl;
-    std::cout << std::endl;
+    if (!vm.count("silent")) {
+        std::cout << std::endl;
+        std::cout << terminal_padding << "running all possible results with" << std::endl;
+        std::cout << terminal_padding << "{" << skillWe << "," << skillThey << "," << flipWe << "," << flipThey << "}" << std::endl;
+        std::cout << std::endl;
+    }
 
     int successes{ 0 };
     for (int i{ 0 }; i <= 99; i++) {
@@ -95,7 +98,7 @@ int main(int argc, char* argv[])
             }
         }
     }
-    std::cout << terminal_padding << ((double)successes / 10000.0);
+    std::cout << (vm.count("silent")? "": terminal_padding) << ((double)successes / 10000.0);
 
     return 0;
 }
