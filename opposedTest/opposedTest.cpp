@@ -1,3 +1,4 @@
+#include <chrono>
 #include <iostream>
 #include "ep2e.h"
 
@@ -15,6 +16,7 @@ po::options_description make_options_description() {
         ("flipWe", po::value<int>(), "do we have flip-flop available? (1|0)")
         ("flipThey", po::value<int>(), "do they have flip-flop available? (1|0)")
         ("silent", "surpress all output except the result (for interoperability)")
+        ("timed", "time the run")
         ;
     return desc;
 }
@@ -90,6 +92,8 @@ int main(int argc, char* argv[])
         std::cout << std::endl;
     }
 
+    auto start = std::chrono::high_resolution_clock::now();
+
     int successes{ 0 };
     for (int i{ 0 }; i <= 99; i++) {
         for (int j{ 0 }; j <= 99; j++) {
@@ -99,6 +103,22 @@ int main(int argc, char* argv[])
         }
     }
     std::cout << (vm.count("silent")? "": terminal_padding) << ((double)successes / 10000.0);
+
+    if (vm.count("timed") && !vm.count("silent")) {
+        auto stop = std::chrono::high_resolution_clock::now();
+        std::string unitString = "ms";
+        auto duration = (duration_cast<std::chrono::milliseconds>(stop - start)).count();
+        if (duration < 10) {
+            duration = (duration_cast<std::chrono::microseconds>(stop - start)).count();;
+            unitString = "us";
+        }
+        if (duration < 10) {
+            duration = (duration_cast<std::chrono::nanoseconds>(stop - start)).count();;
+            unitString = "ns";
+        }
+        std::cout << std::endl << std::endl;
+        std::cout << terminal_padding << "execution time around " << duration << unitString << std::endl;
+    }
 
     return 0;
 }
