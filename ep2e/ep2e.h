@@ -106,6 +106,18 @@ namespace ep2e {
         return 0;
     }
 
+    double opposed_test_p(int skillWe, int skillThey, bool flipWe, bool flipThey) {
+        int successes{ 0 };
+        for (int i{ 0 }; i <= 99; i++) {
+            for (int j{ 0 }; j <= 99; j++) {
+                if (ep2e::opposed_test(skillWe, skillThey, i, j, flipWe, flipThey) == 1) {
+                    successes++;
+                }
+            }
+        }
+        return successes / 10000.0;
+    }
+
     class Dice {
 
     private:
