@@ -102,10 +102,12 @@ int main(int argc, char* argv[])
             }
         }
     }
+
+    auto stop = std::chrono::high_resolution_clock::now();
+
     std::cout << (vm.count("silent")? "": terminal_padding) << ((double)successes / 10000.0);
 
     if (vm.count("timed") && !vm.count("silent")) {
-        auto stop = std::chrono::high_resolution_clock::now();
         std::string unitString = "ms";
         auto duration = (duration_cast<std::chrono::milliseconds>(stop - start)).count();
         if (duration < 10) {
