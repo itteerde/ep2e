@@ -9,6 +9,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ep2eTest", "ep2eTest\ep2eTe
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "opposedTest", "opposedTest\opposedTest.vcxproj", "{95F93382-E973-4A2B-B49A-7654683F1D0E}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "depressure", "depressure\depressure.vcxproj", "{C45F3A21-24E3-4870-83D1-161793E5170E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -41,6 +43,14 @@ Global
 		{95F93382-E973-4A2B-B49A-7654683F1D0E}.Release|x64.Build.0 = Release|x64
 		{95F93382-E973-4A2B-B49A-7654683F1D0E}.Release|x86.ActiveCfg = Release|Win32
 		{95F93382-E973-4A2B-B49A-7654683F1D0E}.Release|x86.Build.0 = Release|Win32
+		{C45F3A21-24E3-4870-83D1-161793E5170E}.Debug|x64.ActiveCfg = Debug|x64
+		{C45F3A21-24E3-4870-83D1-161793E5170E}.Debug|x64.Build.0 = Debug|x64
+		{C45F3A21-24E3-4870-83D1-161793E5170E}.Debug|x86.ActiveCfg = Debug|Win32
+		{C45F3A21-24E3-4870-83D1-161793E5170E}.Debug|x86.Build.0 = Debug|Win32
+		{C45F3A21-24E3-4870-83D1-161793E5170E}.Release|x64.ActiveCfg = Release|x64
+		{C45F3A21-24E3-4870-83D1-161793E5170E}.Release|x64.Build.0 = Release|x64
+		{C45F3A21-24E3-4870-83D1-161793E5170E}.Release|x86.ActiveCfg = Release|Win32
+		{C45F3A21-24E3-4870-83D1-161793E5170E}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
