@@ -118,6 +118,10 @@ namespace ep2e {
         return successes / 10000.0;
     }
 
+    void opposed_test_p_concurrent(int skillWe, int skillThey, bool flipWe, bool flipThey, double& result) {
+        result = opposed_test_p(skillWe, skillThey, flipWe, flipThey);
+    }
+
     class Dice {
 
     private:

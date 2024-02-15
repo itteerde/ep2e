@@ -1,5 +1,7 @@
 #include <chrono>
+//#include <functional>
 #include <iostream>
+//#include <thread>
 #include "ep2e.h"
 
 #include <boost/program_options.hpp>
@@ -130,6 +132,7 @@ int main(int argc, char* argv[])
         double best{ 0 };
         double res[]{ 0,0,0,0,0 };
         res[0] = ep2e::opposed_test_p(skillWe, skillThey, flipWe, flipThey);
+        //std::thread t1{ep2e::opposed_test_p_concurrent,std::ref(skillWe, skillThey, flipWe, flipThey, res[0])};
         res[1] = ep2e::opposed_test_p(skillWe, skillThey, 0, flipThey);
         res[2] = ep2e::opposed_test_p(skillWe + 20, skillThey, 0, flipThey);
         res[3] = ep2e::opposed_test_p(skillWe, skillThey, 1, flipThey);
