@@ -25,11 +25,13 @@ po::options_description make_options_description() {
 }
 
 void displayHelp(po::options_description desc) {
+    std::cout << std::endl;
     for (auto o : desc.options()) {
         std::cout << "--" << o.get()->canonical_display_name() << " " << o.get()->description() << std::endl;
     }
     std::cout << std::endl;
     std::cout << "like .\\opposedTest.exe --skillWe=80 --skillThey=40 --flipWe=1" << std::endl;
+    std::cout << std::endl;
 }
 
 int main(int argc, char* argv[])
@@ -60,29 +62,27 @@ int main(int argc, char* argv[])
         return 0;
     }
 
-    if (!vm.count("skillWe") && !vm.count("silent")) {
-        std::cout << terminal_padding << "no --skillWe provided, using default " << skillWe << std::endl;
-    }
-    else {
-        skillWe = vm["skillWe"].as<int>();
+    if (!vm.count("skillWe") || !vm.count("skillThey")) {
+        std::cout << "--skillWe=<int> and --skillThey=<int> required" << std::endl;
+        return -1;
     }
 
-    if (!vm.count("skillThey") && !vm.count("silent")) {
-        std::cout << terminal_padding << "no --skillThey provided, using default " << skillThey << std::endl;
-    }
-    else {
-        skillThey = vm["skillThey"].as<int>();
-    }
+    skillWe = vm["skillWe"].as<int>();
+    skillThey = vm["skillThey"].as<int>();
 
-    if (!vm.count("flipWe") && !vm.count("silent")) {
-        std::cout << terminal_padding << "no --flipWe provided, using default " << (flipWe ? 1 : 0) << std::endl;
+    if (!vm.count("flipWe")) {
+        if (!vm.count("silent")) {
+            std::cout << terminal_padding << "no --flipWe provided, using default " << (flipWe ? 1 : 0) << std::endl;
+        }
     }
     else {
         flipWe = vm["flipWe"].as<int>() == 1 ? true : false;
     }
 
-    if (!vm.count("flipThey") && !vm.count("silent")) {
-        std::cout << terminal_padding << "no --flipThey provided, using default " << (flipThey ? 1 : 0) << std::endl;
+    if (!vm.count("flipThey")) {
+        if (!vm.count("silent")) {
+            std::cout << terminal_padding << "no --flipThey provided, using default " << (flipThey ? 1 : 0) << std::endl;
+        }
     }
     else {
         flipThey = vm["flipThey"].as<int>() == 1 ? true : false;
@@ -107,7 +107,10 @@ int main(int argc, char* argv[])
         }
         auto stop = std::chrono::high_resolution_clock::now();
 
-        std::cout << (vm.count("silent") ? "" : terminal_padding) << ((double)successes / 10000.0);
+        if (!vm.count("silent")) {
+            std::cout << terminal_padding;
+        }
+        std::cout << ((double)successes / 10000.0);
 
         if (vm.count("timed") && !vm.count("silent")) {
             std::string unitString = "ms";
@@ -129,26 +132,32 @@ int main(int argc, char* argv[])
 
     if (vm.count("scenarios")) {
         auto start = std::chrono::high_resolution_clock::now();
-        double best{ 0 };
-        double res[]{ 0,0,0,0,0 };
+        int best{ 0 };
+        double res[]{ 0,0,0,0 };
         res[0] = ep2e::opposed_test_p(skillWe, skillThey, flipWe, flipThey);
         //std::thread t1{ep2e::opposed_test_p_concurrent,std::ref(skillWe, skillThey, flipWe, flipThey, res[0])};
         res[1] = ep2e::opposed_test_p(skillWe, skillThey, 0, flipThey);
         res[2] = ep2e::opposed_test_p(skillWe + 20, skillThey, 0, flipThey);
         res[3] = ep2e::opposed_test_p(skillWe, skillThey, 1, flipThey);
-        for (int i{ 0 }; i < sizeof(res); i++) {
-            if (res[i] > best) {
-                best = res[i];
+        for (int i{ 0 }; i < 4; i++) {
+            if (res[i] >= res[best]) {
+                best = i;
             }
         }
         auto stop = std::chrono::high_resolution_clock::now();
 
-        std::cout << std::endl;
-        std::cout << terminal_padding << "{" << skillWe << "," << skillThey << "," << flipWe << "," << flipThey << "}: " << res[0] << ((res[0]==best)?" (best)":"") << std::endl;
-        std::cout << std::endl;
-        std::cout << terminal_padding << "{" << skillWe << "," << skillThey << "," << 0 << "," << flipThey << "}: " << res[1] << ((res[1] == best) ? " (best)" : "") << std::endl;
-        std::cout << terminal_padding << "{" << skillWe+20 << "," << skillThey << "," << 0 << "," << flipThey << "}: " << res[2] << ((res[2] == best) ? " (best)" : "") << std::endl;
-        std::cout << terminal_padding << "{" << skillWe << "," << skillThey << "," << 1 << "," << flipThey << "}: " << res[3] << ((res[3] == best) ? " (best)" : "") << std::endl;
+        if (!vm.count("silent")) {
+            std::cout << std::endl;
+            std::cout << terminal_padding << "{" << skillWe << "," << skillThey << "," << flipWe << "," << flipThey << "}: " << res[0] << ((0 == best) ? " (best)" : "") << std::endl;
+            std::cout << std::endl;
+            std::cout << terminal_padding << "{" << skillWe << "," << skillThey << "," << 0 << "," << flipThey << "}: " << res[1] << ((1 == best) ? " (best)" : "") << std::endl;
+            std::cout << terminal_padding << "{" << skillWe + 20 << "," << skillThey << "," << 0 << "," << flipThey << "}: " << res[2] << ((2 == best) ? " (best)" : "") << std::endl;
+            std::cout << terminal_padding << "{" << skillWe << "," << skillThey << "," << 1 << "," << flipThey << "}: " << res[3] << ((3 == best) ? " (best)" : "") << std::endl;
+        }
+        else {
+            std::cout << res[0] << "," << res[1] << "," << res[2] << "," << res[3];
+            return 0;
+        }
 
         if (vm.count("timed") && !vm.count("silent")) {
             std::string unitString = "ms";
