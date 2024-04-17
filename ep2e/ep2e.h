@@ -108,7 +108,7 @@ namespace ep2e {
 
     double opposed_test_p(int skillWe, int skillThey, bool flipWe, bool flipThey) {
         int successes{ 0 };
-        for (int i{ 0 }; i <= 99; i++) {
+        for (int i{ 0 }; i < 99; i++) {//99 always fails
             for (int j{ 0 }; j <= 99; j++) {
                 if (ep2e::opposed_test(skillWe, skillThey, i, j, flipWe, flipThey) == 1) {
                     successes++;
@@ -120,6 +120,37 @@ namespace ep2e {
 
     void opposed_test_p_concurrent(int skillWe, int skillThey, bool flipWe, bool flipThey, double& result) {
         result = opposed_test_p(skillWe, skillThey, flipWe, flipThey);
+    }
+
+    int unopposed_test(int skill, bool flipFlop, int roll) {
+        if (is_critical(roll)) {
+            if (roll <= skill) {
+                return 1;
+            }
+            else {
+                return 0;
+            }
+        }
+
+        if (roll <= skill) {
+            return 1;
+        }
+
+        if (flipFlop && flip(roll) <= skill) {
+            return 1;
+        }
+
+        return 0;
+    }
+
+    double unopposed_test_p(int skill, bool flip) {
+        int successes{ 0 };
+        for (int r{ 0 }; r < 99; r++) {//99 always fails
+            if (unopposed_test(skill, flip, r) == 1) {
+                successes++;
+            }
+        }
+        return successes / 100.0;
     }
 
     class Dice {
