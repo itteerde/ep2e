@@ -2,14 +2,18 @@
 #include "CLI\CLI.hpp"
 #include "../ep2e/ep2e.h"
 
+const static std::string INDENT = "   ";
+
 int main(int argc, char* argv[]){
 	int skill{ 0 };
 	bool flip{ false };
+	bool silent{ false };
 
 	CLI::App app{ "Eclipse Phase 2nd Edition: Unopposed Tests" };
     
     app.add_option("--skill", skill, "Skill")->required();
     app.add_flag("--flip", flip, "Flip-flop");
+	app.add_flag("--silent", silent, "Silent (for use as input to other programs)");
 
 	CLI11_PARSE(app, argc, argv);
 
@@ -25,11 +29,17 @@ int main(int argc, char* argv[]){
 		}
 	}
 
-	std::cout << std::endl;
-	std::cout << "{ skill: " << skill << ", " << "flip: " << flip << " } : " << res[0] << ((0 == best) ? " (best)" : "") << std::endl;
-	std::cout << "{ skill: " << skill + 20 << ", " << "flip: " << false << " } : " << res[1] << ((1 == best) ? " (best)" : "") << std::endl;
-	std::cout << "{ skill: " << skill << ", " << "flip: " << true << " } : " << res[2] << ((2 == best) ? " (best)" : "") << std::endl;
-	std::cout << std::endl;
+	if (!silent) {
+		std::cout << std::endl;
+		std::cout << "{ skill: " << skill << ", " << "flip: " << flip << " } : " << res[0] << ((0 == best) ? " (best)" : "") << std::endl;
+		std::cout << "{ skill: " << skill + 20 << ", " << "flip: " << false << " } : " << res[1] << ((1 == best) ? " (best)" : "") << std::endl;
+		std::cout << "{ skill: " << skill << ", " << "flip: " << true << " } : " << res[2] << ((2 == best) ? " (best)" : "") << std::endl;
+		std::cout << std::endl;
+	}
+	else {
+		std::cout << "{" << res[0] << "," << res[1] << "," << res[2] << "}" << std::endl;
+	}
 
+	return 0;
 }
 
