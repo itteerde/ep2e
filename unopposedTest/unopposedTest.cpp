@@ -31,9 +31,9 @@ int main(int argc, char* argv[]){
 
 	if (!silent) {
 		std::cout << std::endl;
-		std::cout << "{ skill: " << skill << ", " << "flip: " << flip << " } : " << res[0] << ((0 == best) ? " (best)" : "") << std::endl;
-		std::cout << "{ skill: " << skill + 20 << ", " << "flip: " << false << " } : " << res[1] << ((1 == best) ? " (best)" : "") << std::endl;
-		std::cout << "{ skill: " << skill << ", " << "flip: " << true << " } : " << res[2] << ((2 == best) ? " (best)" : "") << std::endl;
+		std::cout << INDENT << "{ skill: " << skill << ", " << "flip: " << flip << " } : " << res[0] << ((0 == best) ? " (best)" : "") << std::endl;
+		std::cout << INDENT << "{ skill: " << skill + 20 << ", " << "flip: " << false << " } : " << res[1] << ((1 == best) ? " (best)" : "") << std::endl;
+		std::cout << INDENT << "{ skill: " << skill << ", " << "flip: " << true << " } : " << res[2] << ((2 == best) ? " (best)" : "") << std::endl;
 		std::cout << std::endl;
 	}
 	else {
