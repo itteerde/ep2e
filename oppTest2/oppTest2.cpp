@@ -15,6 +15,7 @@ int main(int argc, char* argv[])
     bool example{ false };
     bool scenarios{ true };
     bool timed{ false };
+    bool adversarial_hacker{ false };
 
     int skillWe{ 0 };
     int skillThey{ 0 };
@@ -32,6 +33,7 @@ int main(int argc, char* argv[])
     app.add_flag("--example", example, "Display example use")->default_val(true);
     app.add_option("--scenarios", scenarios, "Display Scenarios");
     app.add_flag("--timed", timed, "Display Timing")->default_val(true);
+    app.add_flag("--advhack", adversarial_hacker, "Adversarial Hacker")->default_val(false);
 
     CLI11_PARSE(app, argc, argv);
 

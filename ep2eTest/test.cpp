@@ -1,6 +1,23 @@
 #include "pch.h"
 #include "ep2e.h"
 
+TEST(ep2e, bit_map_rollres) {
+	int_fast64_t mask{ 0 };
+	mask |= ep2e::ADVERSARIAL_HACKER;
+	EXPECT_TRUE(mask & ep2e::ADVERSARIAL_HACKER);
+	EXPECT_FALSE(mask & ep2e::POOL_FLEX);
+	mask |= ep2e::POOL_FLEX;
+	EXPECT_TRUE(mask & ep2e::POOL_FLEX);
+	mask |= ep2e::POOL_SPECIFIC;
+	EXPECT_TRUE(mask & ep2e::ADVERSARIAL_HACKER);
+	EXPECT_TRUE(mask & ep2e::POOL_FLEX);
+	EXPECT_TRUE(mask & ep2e::POOL_SPECIFIC);
+	mask &= ~ep2e::ADVERSARIAL_HACKER;
+	EXPECT_FALSE(mask & ep2e::ADVERSARIAL_HACKER);
+	EXPECT_TRUE(mask & ep2e::POOL_FLEX);
+	EXPECT_TRUE(mask & ep2e::POOL_SPECIFIC);
+}
+
 TEST(ep2e, flip) {
   EXPECT_EQ(ep2e::flip(0), 0);
   EXPECT_EQ(ep2e::flip(1), 10);

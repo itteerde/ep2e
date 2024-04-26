@@ -5,6 +5,10 @@
 
 namespace ep2e {
 
+    const int_fast64_t ADVERSARIAL_HACKER{ 1 << 1 };
+    const int_fast64_t POOL_SPECIFIC{ 1 << 2 };
+    const int_fast64_t POOL_FLEX{ 1 << 3 };
+
     /**
     * flip-flops the roll r. r [0..99].
     */
