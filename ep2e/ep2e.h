@@ -5,9 +5,9 @@
 
 namespace ep2e {
 
-    const int_fast64_t ADVERSARIAL_HACKER{ 1 << 1 };
-    const int_fast64_t POOL_SPECIFIC{ 1 << 2 };
-    const int_fast64_t POOL_FLEX{ 1 << 3 };
+    constexpr int_fast64_t ADVERSARIAL_HACKER{ 1 << 1 };
+    constexpr int_fast64_t POOL_SPECIFIC{ 1 << 2 };
+    constexpr int_fast64_t POOL_FLEX{ 1 << 3 };
 
     /**
     * flip-flops the roll r. r [0..99].
@@ -21,6 +21,54 @@ namespace ep2e {
     */
     inline bool is_critical(int r) {
         return (r / 10 == r % 10);
+    }
+
+    // opposed test using bit masks to provide available resources
+    int opposed_test_resources(int skill_we, int skill_they, int roll_we, int roll_they, 
+        // bit mask resources we
+        // ep2::ADVERSARIAL_HACKER
+        // ep2::POOL_SPECIFIC
+        // ep2::POOL_FLEX
+        int_fast64_t resources_we, 
+        int_fast64_t resources_they) {
+
+        // testing is_critical is done three times per value. doing it once and using one extra bool per side should be faster 
+        // (is_critical has a division and a modulo, so the inlining does not make it super fast)
+
+        // start criticals
+        // only ours is a critical success
+        if (
+            (is_critical(roll_we) && roll_we <= skill_we) &&
+            (!is_critical(roll_they) || roll_they > skill_they)
+            ) {
+            return 1;
+        }
+        // only theirs is a critical success
+        if (
+            (is_critical(roll_they) && roll_they <= skill_they) &&
+            (!is_critical(roll_we) || roll_we > skill_we)
+            ) {
+            return 0;
+        }
+        // both are critical success
+        if (
+            (is_critical(roll_we) && roll_we <= skill_we) &&
+            (is_critical(roll_they) && roll_they <= skill_they)
+            ) {
+            if (roll_we > roll_they) {
+                return 1;
+            }
+            return 0;
+        }
+        // end criticals
+
+        if (roll_we < skill_we) { // we fail target
+            if (! (resources_we & POOL_SPECIFIC || resources_we & POOL_FLEX) ) { // ... and we don't have pool to try to fix it
+                return 0;
+            }
+        }
+
+        return 0;
     }
 
     /**
@@ -108,6 +156,109 @@ namespace ep2e {
         }
 
         return 0;
+    }
+
+    /**
+    * 1 if we win, 0 otherwise (the defender wins if draw, so there is no draw)
+    * 
+    * not implemented yet
+    *
+    * When the GM calls for a test, roll percentile dice and compare the result to the target number. The target number is based on the character’s skill,
+      aptitude check, or rep network score. If the result is equal to or less than the target number, the test succeeds. If the result is higher, the test fails.
+      Though you want to roll equal to or under the target number, you also want to roll as high as possible in order to get a superior success or to beat your opponent in opposed tests.
+    */
+    int opposed_test(int skillWe, int skillThey, int rollWe, int rollThey, bool flipWe, bool flipThey, bool adversarialHackerWe, bool adversarialHackerThey) {
+
+        // start criticals
+        // only ours is a critical success
+        if (
+            (is_critical(rollWe) && rollWe <= skillWe) &&
+            (!is_critical(rollThey) || rollThey > skillThey)
+            ) {
+            return 1;
+        }
+        // only theirs is a critical success
+        if (
+            (is_critical(rollThey) && rollThey <= skillThey) &&
+            (!is_critical(rollWe) || rollWe > skillWe)
+            ) {
+            return 0;
+        }
+        // both are critical success
+        if (
+            (is_critical(rollWe) && rollWe <= skillWe) &&
+            (is_critical(rollThey) && rollThey <= skillThey)
+            ) {
+            if (rollWe > rollThey) {
+                return 1;
+            }
+            return 0;
+        }
+        // end criticals
+
+        // after criticals are done, for flip-flop, there is a best result individually for the opponents, so lets figure out those
+
+        int bestWe{ rollWe };
+        int bestThey{ rollThey };
+
+        // need to work through the sequence of Adversarial Hacker from here on
+
+        if (flipWe) {
+            int flippedWe = flip(rollWe);
+            if (rollWe > skillWe && flippedWe <= skillWe) {
+                bestWe = flippedWe;
+            }
+            if (rollWe <= skillWe && flippedWe <= skillWe) {
+                bestWe = rollWe > flippedWe ? rollWe : flippedWe;
+            }
+        }
+
+        if (flipThey) {
+            int flippedThey = flip(rollThey);
+            if (rollThey > skillThey && flippedThey <= skillThey) {
+                bestThey = flippedThey;
+            }
+            if (rollThey <= skillThey && flippedThey <= skillThey) {
+                bestThey = rollThey > flippedThey ? rollThey : flippedThey;
+            }
+        }
+
+        // only we succeed
+        if (bestWe <= skillWe && bestThey > skillThey) {
+            return 1;
+        }
+
+        // only they succeed
+        if (bestThey <= skillThey && bestWe > skillWe) {
+            return 0;
+        }
+
+        // both succeed
+        if (bestWe <= skillWe && bestThey <= skillThey) {
+            if (bestWe > bestThey) {
+                return 1;
+            }
+            return 0;
+        }
+
+        // both fail
+        if (skillWe > skillThey) {
+            return 1;
+        }
+
+        return 0;
+    }
+
+    double opposed_test_p(int skillWe, int skillThey, bool flipWe, bool flipThey, bool adversarialHackerWe, bool adversarialHackerThey) {
+        int successes{ 0 };
+        for (int i{ 0 }; i < 99; i++) {//99 always fails
+            for (int j{ 0 }; j <= 99; j++) {
+                if (ep2e::opposed_test(skillWe, skillThey, i, j, flipWe, flipThey, adversarialHackerWe, adversarialHackerThey) == 1) {
+                    successes++;
+                }
+            }
+        }
+        return successes / 10000.0;
     }
 
     double opposed_test_p(int skillWe, int skillThey, bool flipWe, bool flipThey) {
